@@ -98,7 +98,7 @@
         </Modal>
     </div>
 </template>
-<script setup lang='ts'>
+<script setup>
 import { computed, reactive, ref } from 'vue'
 import Modal from '../atoms/Modal.vue'
 import { formatDate } from '../../utils/date'
