@@ -56,7 +56,7 @@
                             <p class="font-bold text-text truncate">{{ task.title }}</p>
                             <div class="flex items-center gap-2 mt-1 flex-wrap">
                                 <span
-                                    :class="['w-2 h-2 rounded-full flex-shrink-0', task.urgency && task.importance ? 'bg-red-400' : 'bg-green-400']"></span>
+                                    :class="['w-2 h-2 rounded-full shrink-0', task.urgency && task.importance ? 'bg-red-400' : 'bg-green-400']"></span>
                                 <span class="text-xs text-subtext flex items-center gap-1">
                                     <i class="fas fa-bolt text-yellow-400 text-[10px]"></i> {{ task.estimatedEnergy }}
                                     <span class="ml-2 text-[10px] text-gray-300">
