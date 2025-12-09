@@ -2,21 +2,40 @@
     <div class="pb-24 space-y-6">
         <h1 class="text-2xl font-bold text-text font-rounded">回顧與設定</h1>
 
-        <div class="bg-primary text-white p-6 rounded-3xl shadow-cute relative overflow-hidden">
-            <div class="relative z-10">
-                <h2 class="text-lg font-medium mb-4 font-rounded">累積成就</h2>
-                <div class="grid grid-cols-2 gap-8">
-                    <div>
-                        <div class="text-4xl font-bold mb-1">{{ completedTasks }}</div>
-                        <div class="text-sm opacity-80">完成任務</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-bold mb-1">{{ totalEnergy }}</div>
-                        <div class="text-sm opacity-80">消耗能量</div>
-                    </div>
-                </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
+                <div class="text-3xl font-bold text-primary mb-1">{{ stats.completedTasks }}</div>
+                <div class="text-xs text-gray-500">已完成任務</div>
             </div>
-            <div class="absolute -right-4 -bottom-4 text-9xl opacity-20">🏆</div>
+            <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
+                <div class="text-3xl font-bold text-secondary mb-1">{{ stats.completionRate }}<span
+                        class="text-sm">%</span></div>
+                <div class="text-xs text-gray-500">總達成率</div>
+            </div>
+            <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
+                <div class="text-3xl font-bold text-yellow-400 mb-1 flex items-center"><i
+                        class="fa-solid fa-bolt text-2xl mr-1"></i> {{ stats.totalEnergyConsumed }}</div>
+                <div class="text-xs text-gray-500">總消耗能量</div>
+            </div>
+            <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
+                <div class="text-lg font-bold text-purple-400 mb-1">{{ stats.mostProductiveDay }}</div>
+                <div class="text-xs text-gray-500">最有行動力</div>
+            </div>
+        </div>
+        <div class="cute-card p-5">
+            <h3 class="font-bold text-sm mb-3 text-gray-700 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-yellow-400"></i> 已達成目標
+            </h3>
+            <ul class="space-y-3">
+                <li v-for="goal in stats.finishedGoals"
+                    class="text-sm flex items-center gap-2 text-gray-600 bg-gray-50 p-2 rounded-lg">
+                    <i class="fa-solid fa-check-circle text-secondary"></i> {{ goal.title }}
+                </li>
+                <li v-if="stats.finishedGoals.length === 0"
+                    class="text-xs text-center py-4 text-gray-400 border border-dashed rounded-lg">
+                    還沒有完全達成的大目標，繼續加油！✨
+                </li>
+            </ul>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -98,6 +117,7 @@
         </Modal>
     </div>
 </template>
+
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import Modal from '../atoms/Modal.vue'
@@ -117,12 +137,23 @@ const newCategory = ref('')
 
 const editingCat = reactive({ original: '', new: '' })
 
-const completedTasks = computed(() => props.tasks.filter(t => t.completed).length)
-const totalEnergy = computed(() => props.tasks.filter(t => t.completed).reduce((acc, t) => acc + (t.estimatedEnergy || 0), 0))
 const overdueTasks = computed(() => {
     const now = new Date()
     return props.tasks.filter(t => t.deadline && new Date(t.deadline) < now && !t.completed)
 })
+const stats = computed(() => {
+    const finished = props.tasks.filter(t => t.completed);
+    return {
+        completedTasks: finished.length,
+        completionRate: props.tasks.length ? Math.round((finished.length / props.tasks.length) * 100) : 0,
+        totalEnergyConsumed: finished.reduce((a, b) => a + (b.estimatedEnergy || 0), 0),
+        mostProductiveDay: '統計中...',
+        finishedGoals: props.goals.filter(g => {
+            const ts = props.tasks.filter(t => t.goalId === g.id);
+            return ts.length > 0 && ts.every(t => t.completed);
+        })
+    };
+});
 
 const handleAddCategory = () => {
     if (newCategory.value && !props.categories.includes(newCategory.value)) {
