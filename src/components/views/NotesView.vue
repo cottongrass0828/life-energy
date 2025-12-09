@@ -9,7 +9,7 @@
                 class="w-full bg-gray-50 rounded-xl p-3 text-sm outline-none resize-none h-24 mb-3"
                 placeholder="今天發生了什麼好玩的事？..."></textarea>
             <div class="flex flex-wrap gap-2 mb-3">
-                <button v-for="m in ['happy', 'calm', 'excited', 'tired', 'sad']" :key="m" @click="noteForm.mood = m"
+                <button v-for="m in ['happy', 'calm', 'tired', 'sad']" :key="m" @click="noteForm.mood = m"
                     :class="['text-xl p-2 rounded-full transition', noteForm.mood === m ? 'bg-secondary transform scale-110' : 'bg-gray-50']">
                     {{ getMoodIcon(m) }}
                 </button>
