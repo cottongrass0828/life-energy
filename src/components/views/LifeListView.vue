@@ -260,6 +260,7 @@ import { formatDate, formatDateTime, toInputDateTime } from '../../utils/date'
 defineOptions({
     name: 'LifeListView'
 })
+
 const props = defineProps({
     goals: Array,
     tasks: Array,

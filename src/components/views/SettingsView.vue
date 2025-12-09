@@ -103,12 +103,18 @@ import { computed, reactive, ref } from 'vue'
 import Modal from '../atoms/Modal.vue'
 import { formatDate } from '../../utils/date'
 
-const props = defineProps({ tasks: Array, goals: Array, categories: Array })
+const props = defineProps({
+    tasks: Array,
+    goals: Array,
+    categories: Array
+})
+
 const emit = defineEmits(['set-categories', 'import-data', 'update-task', 'delete-task'])
 
 const isCatModalOpen = ref(false)
 const isOverdueModalOpen = ref(false)
 const newCategory = ref('')
+
 const editingCat = reactive({ original: '', new: '' })
 
 const completedTasks = computed(() => props.tasks.filter(t => t.completed).length)

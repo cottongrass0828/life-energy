@@ -64,7 +64,9 @@
 import { ref, computed } from 'vue'
 import { getMoodIcon, formatDateTime } from '../../utils/date'
 
-const props = defineProps({ notes: Array })
+const props = defineProps({
+    notes: Array
+})
 const emit = defineEmits(['add-note', 'update-note', 'delete-note'])
 
 const noteForm = ref({ content: '', mood: 'happy', tags: '', date: new Date().toISOString() })

@@ -22,16 +22,11 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 defineOptions({
     name: 'MatrixView'
 })
-defineProps({ tasks: Array })
-
-const emit = defineEmits([])
-
-defineExpose({})
-
-const { t } = useI18n()
+defineProps({
+    tasks: Array
+})
 </script>
