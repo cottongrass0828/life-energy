@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+    --font-sans: "Noto Sans TC",
+        "Zen Maru Gothic",
+        'sans-serif';
+    --font-rounded: "Zen Maru Gothic",
+        "Noto Sans TC",
+        'sans-serif';
+    --color-cream: #FFFBF0;
+    --color-paper: #FFFFFF;
+    --color-primary: #FFB7B2;
+    --color-secondary: #B5EAD7;
+    --color-accent: #E2F0CB;
+    --color-highlight: #FFDAC1;
+    --color-text: #4A4A4A;
+    --color-subtext: #888888;
+    --color-danger: #FF9AA2;
+    --shadow-soft: '0 4px 20px -2px rgba(200, 200, 200, 0.25)';
+    --shadow-cute: '3px 3px 0px 0px rgba(74, 74, 74, 0.1)';
+    --shadow-inner-soft: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)';
+
+}
+
 body {
     background-color: #FFFBF0;
     color: #4A4A4A;
