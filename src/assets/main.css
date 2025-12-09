@@ -31,6 +31,13 @@ body {
     /* Prevent body scroll, handle in app */
 }
 
+.cute-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
 /* Hide Scrollbar but keep functionality */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
