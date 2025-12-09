@@ -26,7 +26,9 @@
         </div>
 
         <div class="bg-primary/10 p-4 rounded-3xl">
-            <label class="text-sm font-bold text-text mb-2 block font-rounded">💭 快速隨手記</label>
+            <label class="text-sm font-bold text-text mb-2 block font-rounded">
+                <i class="fa-solid fa-pen-fancy text-secondary mr-2"></i>隨手記
+            </label>
             <div class="flex gap-2">
                 <input type="text" v-model="noteContent" placeholder="在想什麼呢？..."
                     class="flex-1 bg-white border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
@@ -60,7 +62,7 @@
                                 <span class="text-xs text-subtext flex items-center gap-1">
                                     <i class="fas fa-bolt text-yellow-400 text-[10px]"></i> {{ task.estimatedEnergy }}
                                     <span class="ml-2 text-[10px] text-gray-300">
-                                        {{ task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline).split(' ')[1] : '') }}
+                                        {{ generateTaskTime(task) }}
                                     </span>
                                     <i v-if="task.recurrence" class="fas fa-repeat text-secondary text-[10px] ml-1"></i>
                                 </span>
@@ -115,4 +117,8 @@ const handleQuickNote = () => {
 }
 
 const toggleTask = (task) => emit('update-task', task.id, { completed: !task.completed })
+
+function generateTaskTime(task) {
+    return task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline).split(' ')[1] : '')
+}
 </script>
