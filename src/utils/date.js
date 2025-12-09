@@ -23,6 +23,6 @@ export const toInputDateTime = (dateStr) => {
 }
 
 export const getMoodIcon = (mood) => {
-    const moods = { happy: '😊', calm: '😌', sad: '😢', angry: '😠', tired: '😫', excited: '🤩' }
-    return moods[mood] || '😐'
+    const moods = { happy: '😊', calm: '😌', sad: '😢', tired: '😫' }
+    return moods[mood] || '😌'
 }
