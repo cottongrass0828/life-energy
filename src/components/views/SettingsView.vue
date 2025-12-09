@@ -1,6 +1,11 @@
 <template>
     <div class="pb-24 space-y-6">
-        <h1 class="text-2xl font-bold text-text font-rounded">回顧與設定</h1>
+        <h1 class="flex justify-between items-center font-rounded">
+            <span class="text-2xl font-bold text-text ">回顧與設定</span>
+            <span class="text-slate-300 text-xs mr-2">
+                v{{ version }}
+            </span>
+        </h1>
 
         <div class="grid grid-cols-2 gap-4">
             <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
@@ -122,6 +127,9 @@
 import { computed, reactive, ref } from 'vue'
 import Modal from '../atoms/Modal.vue'
 import { formatDate } from '../../utils/date'
+import pkg from '../../../package.json'
+
+const version = pkg.version
 
 const props = defineProps({
     tasks: Array,
