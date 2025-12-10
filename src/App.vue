@@ -1,24 +1,70 @@
 <template>
   <div
-    class="min-h-screen bg-cream font-sans text-text max-w-md mx-auto shadow-2xl relative overflow-hidden flex flex-col">
+    class="min-h-screen bg-cream font-sans text-text max-w-md mx-auto shadow-2xl relative overflow-hidden flex flex-col"
+  >
     <!-- Main -->
     <main class="flex-1 p-6 box-border overflow-y-auto no-scrollbar pb-24 relative">
-      <component :is="currentViewComponent" :tasks="tasks" :goals="goals" :notes="notes" :categories="categories"
-        @add-note="addNote" @update-note="updateNote" @delete-note="deleteNote" @add-task="addTask"
-        @update-task="updateTask" @delete-task="deleteTask" @add-goal="addGoal" @update-goal="updateGoal"
-        @delete-goal="deleteGoal" @set-categories="(c) => (categories = c)" @import-data="handleImport"
-        @change-view="(v) => (view = v)" />
+      <component
+        :is="currentViewComponent"
+        :tasks="tasks"
+        :goals="goals"
+        :notes="notes"
+        :categories="categories"
+        @add-note="addNote"
+        @update-note="updateNote"
+        @delete-note="deleteNote"
+        @add-task="addTask"
+        @update-task="updateTask"
+        @delete-task="deleteTask"
+        @add-goal="addGoal"
+        @update-goal="updateGoal"
+        @delete-goal="deleteGoal"
+        @set-categories="(c) => (categories = c)"
+        @import-data="handleImport"
+        @change-view="(v) => (view = v)"
+      />
     </main>
 
     <!-- Bottom Navigation -->
     <nav
-      class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 h-20 pb-4 px-6 flex justify-between items-center z-40 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.03)]">
-      <NavItem icon="fa-home" label="首頁" :active="view === 'dashboard'" @click="view = 'dashboard'" />
-      <NavItem icon="fa-list-check" label="清單" :active="view === 'lifelist'" @click="view = 'lifelist'" />
-      <NavItem icon="fa-pen-nib" label="筆記" :active="view === 'notes'" @click="view = 'notes'" />
-      <NavItem icon="fa-calendar-day" label="日曆" :active="view === 'calendar'" @click="view = 'calendar'" />
-      <NavItem icon="fa-th-large" label="象限" :active="view === 'matrix'" @click="view = 'matrix'" />
-      <NavItem icon="fa-user-cog" label="設定" :active="view === 'settings'" @click="view = 'settings'" />
+      class="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 h-20 pb-4 px-6 flex justify-between items-center z-40 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.03)]"
+    >
+      <NavItem
+        icon="fa-home"
+        label="首頁"
+        :active="view === 'dashboard'"
+        @click="view = 'dashboard'"
+      />
+      <NavItem
+        icon="fa-list-check"
+        label="清單"
+        :active="view === 'lifelist'"
+        @click="view = 'lifelist'"
+      />
+      <NavItem
+        icon="fa-pen-nib"
+        label="筆記"
+        :active="view === 'notes'"
+        @click="view = 'notes'"
+      />
+      <NavItem
+        icon="fa-calendar-day"
+        label="日曆"
+        :active="view === 'calendar'"
+        @click="view = 'calendar'"
+      />
+      <NavItem
+        icon="fa-th-large"
+        label="象限"
+        :active="view === 'matrix'"
+        @click="view = 'matrix'"
+      />
+      <NavItem
+        icon="fa-user-cog"
+        label="設定"
+        :active="view === 'settings'"
+        @click="view = 'settings'"
+      />
     </nav>
   </div>
 </template>
@@ -64,7 +110,7 @@ const deleteGoal = (id) => {
 }
 
 // recurrence helper
-function handleRecurrence(task) {
+function handleRecurrence (task) {
   if (!task.recurrence) return
   const { frequency, interval, type, count, endDate } = task.recurrence
   if (type === 'count' && count <= 1) return
