@@ -64,7 +64,7 @@
                 @change="$emit('update-task', task.id, { completed: !task.completed })"
               >
               <div class="flex flex-col min-w-0">
-                <span :class="['truncate', task.completed ? 'line-through text-gray-300' : 'text-text']">{{
+                <span :class="[task.completed ? 'line-through text-gray-300' : 'text-text']">{{
                   task.title }}</span>
                 <span class="text-[10px] text-gray-400">
                   {{ task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline) : '待排程') }}
@@ -100,10 +100,10 @@
                 @click.stop="openEditGoal(goal)"
                 class="text-gray-300 hover:text-primary"
               ><i class="fas fa-pen"></i></button>
-              <button
+              <!-- <button
                 @click.stop="$emit('delete-goal', goal.id)"
                 class="text-gray-300 hover:text-red-400"
-              ><i class="fas fa-trash"></i></button>
+              ><i class="fas fa-trash"></i></button> -->
             </div>
           </div>
           <h3 class="text-lg font-bold text-text mb-2">{{ goal.title }}</h3>
@@ -137,7 +137,7 @@
                   @change="$emit('update-task', task.id, { completed: !task.completed })"
                 >
                 <div class="flex flex-col min-w-0">
-                  <span :class="['truncate', task.completed ? 'line-through text-gray-300' : 'text-text']">{{
+                  <span :class="[task.completed ? 'line-through text-gray-300' : 'text-text']">{{
                     task.title }}</span>
                   <span class="text-[10px] text-gray-400">
                     {{ task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline) :
@@ -161,11 +161,11 @@
                 <button
                   @click="openEditTask(task)"
                   class="text-gray-300 hover:text-primary"
-                ><i class="fas fa-pen text-xs"></i></button>
-                <button
+                ><i class=" fas fa-pen "></i></button>
+                <!-- <button
                   @click="$emit('delete-task', task.id)"
                   class="text-gray-300 hover:text-red-400"
-                ><i class="fas fa-times text-xs"></i></button>
+                ><i class="fas fa-times text-xs"></i></button> -->
               </div>
             </div>
           </div>
@@ -219,6 +219,11 @@
           @click="handleGoalSave"
           class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-cute mt-4"
         >儲存目標</button>
+        <button
+          v-if="tempGoal.id"
+          @click="handleGoalDelete(tempGoal.id)"
+          class="w-full border text-primary py-3 rounded-xl font-bold shadow-cute"
+        >刪除目標</button>
       </div>
     </Modal>
 
@@ -230,11 +235,11 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-bold text-subtext mb-1">任務內容</label>
-          <input
+          <textarea
             type="text"
             v-model="tempTask.title"
             class="w-full bg-gray-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-primary/50"
-          >
+          />
           <span
             v-if="taskErrors.title"
             class="text-red-400 text-xs"
@@ -411,6 +416,11 @@
           class="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-cute mt-4"
         >{{ tempTask.id ?
           "更新" : "加入" }}</button>
+        <button
+          v-if="tempTask.id"
+          @click="handleTaskDelete(tempTask.id)"
+          class="w-full border text-primary py-3 rounded-xl font-bold shadow-cute"
+        >刪除</button>
       </div>
     </Modal>
   </div>
@@ -475,6 +485,11 @@ const handleGoalSave = () => {
   isAddGoalOpen.value = false
 }
 
+function handleGoalDelete (id) {
+  emit('delete-goal', id)
+  isAddGoalOpen.value = false
+}
+
 const handleTaskSave = () => {
   const errors = {}
   if (!tempTask.value.title) errors.title = '請輸入標題'
@@ -490,6 +505,11 @@ const handleTaskSave = () => {
 
   if (t.id) emit('update-task', t.id, t)
   else emit('add-task', t)
+  isAddTaskOpen.value = false
+}
+
+function handleTaskDelete (id) {
+  emit('delete-task', id)
   isAddTaskOpen.value = false
 }
 

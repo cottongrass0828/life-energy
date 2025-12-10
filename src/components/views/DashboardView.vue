@@ -29,12 +29,12 @@
         <i class="fa-solid fa-pen-fancy text-secondary mr-2"></i>隨手記
       </label>
       <div class="flex gap-2">
-        <input
+        <textarea
           type="text"
           v-model="noteContent"
           placeholder="在想什麼呢？..."
           class="flex-1 bg-white border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"
-        >
+        />
         <button
           @click="handleQuickNote"
           class="bg-primary text-white rounded-xl w-10 h-10 shadow-cute active:shadow-none active:translate-y-1 transition-all"
