@@ -20,7 +20,7 @@
           v-for="m in ['happy', 'calm', 'tired', 'sad']"
           :key="m"
           @click="noteForm.mood = m"
-          :class="['text-xl p-2 rounded-full transition', noteForm.mood === m ? 'bg-secondary transform scale-110' : 'bg-gray-50']"
+          :class="['text-xl px-2 py-1 rounded-full transition', noteForm.mood === m ? 'bg-secondary transform scale-110' : 'bg-gray-50']"
         >
           {{ getMoodIcon(m) }}
         </button>
