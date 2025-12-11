@@ -3,7 +3,7 @@
     class="min-h-screen bg-cream font-sans text-text max-w-md mx-auto shadow-2xl relative overflow-hidden flex flex-col"
   >
     <!-- Main -->
-    <main class="flex-1 p-6 box-border overflow-y-auto no-scrollbar pb-24 relative">
+    <main class="flex-1 p-6 box-border overflow-y-auto no-scrollbar max-h-[90vh] relative">
       <component
         :is="currentViewComponent"
         :tasks="tasks"
