@@ -4,7 +4,7 @@
       <h1 class="text-2xl font-bold text-text font-rounded">行事曆</h1>
     </div>
 
-    <div class="bg-gray-100 p-1 rounded-xl flex mb-6">
+    <!-- <div class="bg-gray-100 p-1 rounded-xl flex mb-6">
       <button
         v-for="v in ['month', 'week', '3day', 'day']"
         :key="v"
@@ -13,7 +13,7 @@
       >
         {{ v === 'month' ? '月' : (v === 'week' ? '週' : (v === '3day' ? '三日' : '日')) }}
       </button>
-    </div>
+    </div> -->
 
     <div class="flex justify-between items-center mb-4 px-2">
       <button
