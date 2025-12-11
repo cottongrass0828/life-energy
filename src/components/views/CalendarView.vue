@@ -97,10 +97,21 @@
             @change="$emit('update-task', task.id, { completed: !task.completed })"
           >
           <div class="flex-1">
-            <span :class="['font-bold text-sm', task.completed ? 'line-through text-gray-300' : 'text-text']">{{
-              task.title }}</span>
-            <div class="text-[10px] text-gray-400">{{ formatDateTime(task.startDate).split(' ')[1] }} - {{
-              formatDateTime(task.deadline).split(' ')[1] }}</div>
+            <span :class="['font-bold text-sm', task.completed ? 'line-through text-gray-300' : 'text-text']">
+              {{ task.title }}
+            </span>
+            <div
+              v-if="task.isAllDay"
+              class="text-[10px] text-gray-400"
+            >
+              整天
+            </div>
+            <div
+              v-else
+              class="text-[10px] text-gray-400"
+            >
+              {{ formatDateTime(task.startDate).split(' ')[1] }} - {{ formatDateTime(task.deadline).split(' ')[1] }}
+            </div>
           </div>
         </div>
       </div>
@@ -207,14 +218,14 @@ const getDayTasks = (date, isTimeGrid = false) => {
   return props.tasks.filter(t => {
     if (!t.startDate || !t.deadline) return false
     if (isTimeGrid) {
-      if (t.isAllDay || t.completed) return false
+      // if (t.isAllDay || t.completed) return false
       const tStart = new Date(t.startDate)
       const tEnd = new Date(t.deadline)
       const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0)
       const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999)
       return tStart < dayEnd && tEnd > dayStart
     } else {
-      return formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr && !t.completed
+      return formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr
     }
   })
 }
