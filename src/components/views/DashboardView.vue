@@ -73,7 +73,7 @@
               @change="toggleTask(task)"
             >
             <div class="flex-1 min-w-0">
-              <p class="font-bold text-text truncate">{{ task.title }}</p>
+              <p class="font-bold text-text">{{ task.title }}</p>
               <div class="flex items-center gap-2 mt-1 flex-wrap">
                 <span
                   :class="['w-2 h-2 rounded-full shrink-0', task.urgency && task.importance ? 'bg-red-400' : 'bg-green-400']"
