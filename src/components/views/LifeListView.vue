@@ -297,7 +297,7 @@
             <input
               :type="tempTask.isAllDay ? 'date' : 'datetime-local'"
               :value="tempTask.isAllDay ? (tempTask.deadline ? tempTask.deadline.split('T')[0] : '') : toInputDateTime(tempTask.deadline)"
-              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T23:59:59.999Z' : '') : (val ? new Date(val).toISOString() : ''); tempTask.deadline = iso; }"
+              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T23:59:59.999' : '') : (val ? new Date(val).toISOString() : ''); tempTask.deadline = iso; }"
               class="w-full bg-gray-50 p-3 rounded-xl outline-none text-xs"
             >
           </div>
