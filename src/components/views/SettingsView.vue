@@ -19,8 +19,9 @@
       </div>
       <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
         <div class="text-3xl font-bold text-yellow-400 mb-1 flex items-center"><i
-            class="fa-solid fa-bolt text-2xl mr-1"></i> {{ stats.totalEnergyConsumed }}</div>
-        <div class="text-xs text-gray-500">總消耗能量</div>
+            class="fa-solid fa-bolt text-2xl mr-1"></i> {{ stats.averageDailyEnergy }}</div>
+        <div class="text-xs text-gray-500">平均消耗能量</div>
+        <div class="text-xs text-gray-500">(總消耗能量: {{ stats.totalEnergyConsumed }})</div>
       </div>
       <div class="cute-card p-4 text-center flex flex-col items-center justify-center">
         <div class="text-lg font-bold text-purple-400 mb-1">{{ stats.mostProductiveDay }}</div>
@@ -210,10 +211,13 @@ const overdueTasks = computed(() => {
 })
 const stats = computed(() => {
   const finished = props.tasks.filter(t => t.completed);
+  const days = new Set(finished.map(t => formatDate(t.completedDate)));
+  const totalEnergyConsumed = finished.reduce((a, b) => a + (b.estimatedEnergy || 0), 0)
   return {
     completedTasks: finished.length,
     completionRate: props.tasks.length ? Math.round((finished.length / props.tasks.length) * 100) : 0,
-    totalEnergyConsumed: finished.reduce((a, b) => a + (b.estimatedEnergy || 0), 0),
+    totalEnergyConsumed,
+    averageDailyEnergy: days.size > 0 ? (totalEnergyConsumed / days.size).toFixed(1) : 0,
     mostProductiveDay: '統計中...',
     finishedGoals: props.goals.filter(g => {
       const ts = props.tasks.filter(t => t.goalId === g.id);

@@ -50,8 +50,9 @@
             <span
               v-if="day"
               :class="['text-xs', formatDate(day) === formatDate(new Date()) ? 'bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center' : '']"
-            >{{
-              day.getDate() }}</span>
+            >
+              {{ day.getDate() }}
+            </span>
             <div
               v-if="day"
               class="flex gap-0.5 mt-1"
@@ -62,11 +63,23 @@
                 class="w-1 h-1 bg-primary rounded-full"
               ></div>
             </div>
+            <div
+              v-if="day && getDayEnergy(day) > 0"
+              class="text-[10px] text-orange-400 font-bold mt-auto mb-1"
+            >
+              <i class="fa-solid fa-bolt mr-1"></i>{{ getDayEnergy(day) }}
+            </div>
           </div>
         </div>
       </div>
       <div class="mt-6 space-y-3">
-        <h3 class="font-bold text-text mb-3 font-rounded">{{ formatDate(selectedDate) }} 詳細行程</h3>
+        <div class="flex justify-between">
+          <h3 class="font-bold text-text mb-3 font-rounded">{{ formatDate(selectedDate) }} 詳細行程</h3>
+          <div class="text-right text-sm">
+            已消耗 <i class="fa-solid fa-bolt text-yellow-400 mr-1"></i>
+            <span class="text-orange-400">{{ getDayEnergy(selectedDate) }}</span>
+          </div>
+        </div>
         <div
           v-if="getDayTasks(selectedDate).length === 0"
           class="text-center text-gray-400 text-sm"
@@ -222,4 +235,15 @@ const getTaskStyle = (task, date) => {
 
   return { top: startMins + 'px', height: Math.max(20, durationMins) + 'px' }
 }
+
+const getDayEnergy = (date) => {
+  if (!date) return 0;
+  const dStr = formatDate(date);
+  const dayTasks = props.tasks.filter(t => {
+    if (!t.startDate || !t.deadline) return false;
+    return formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr;
+  });
+  return dayTasks.reduce((acc, t) => acc + (parseInt(t.estimatedEnergy) || 0), 0);
+};
+
 </script>
