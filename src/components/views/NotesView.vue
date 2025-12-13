@@ -102,36 +102,75 @@
           class="text-primary text-sm underline mt-2"
         >清除搜尋</button>
       </div>
-      <div
-        v-for="note in filteredNotes.sort((a, b) => new Date(b.date) - new Date(a.date))"
-        :key="note.id"
-        class="bg-white p-4 rounded-3xl shadow-soft flex gap-4 group"
-      >
-        <div class="flex flex-col items-center">
-          <span class="text-2xl">{{ getMoodIcon(note.mood) }}</span>
-          <div class="h-full w-0.5 bg-gray-100 mt-2 rounded-full"></div>
-        </div>
-        <div class="flex-1 pb-2">
-          <div class="flex justify-between items-start mb-1">
-            <span class="text-xs text-subtext">{{ formatDateTime(note.date) }}</span>
-            <div class="flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-              <button
-                @click="startEdit(note)"
-                class="text-gray-300 hover:text-primary text-xs"
-              ><i class="fas fa-pen"></i></button>
-            </div>
-          </div>
-          <p class="text-text text-sm mb-2 leading-relaxed whitespace-pre-wrap">{{ note.content }}</p>
-          <div class="flex flex-wrap gap-1">
+      <div class="space-y-6">
+        <div
+          v-for="group in groupedNotes"
+          :key="group.title"
+        >
+          <!-- Month Header -->
+          <div class="sticky-header">
             <span
-              v-for="t in note.tags"
-              :key="t"
-              class="text-[10px] bg-gray-100 text-subtext px-2 py-0.5 rounded-md"
-            >#{{ t }}</span>
+              class="text-xs font-bold text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-100 shadow-sm"
+            >
+              {{ group.title }}
+            </span>
+          </div>
+          <div class="space-y-3">
+            <div
+              v-for="note in group.items"
+              :key="note.id"
+              class="bg-white p-4 rounded-3xl shadow-soft flex gap-4 group"
+            >
+              <div class="flex flex-col items-center">
+                <span class="text-2xl">{{ getMoodIcon(note.mood) }}</span>
+                <div class="h-full w-0.5 bg-gray-100 mt-2 rounded-full"></div>
+              </div>
+              <div class="flex-1 pb-2">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-xs text-subtext">{{ formatDateTime(note.date) }}</span>
+                  <div class="flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <button
+                      @click="startEdit(note)"
+                      class="text-gray-300 hover:text-primary text-xs"
+                    ><i class="fas fa-pen"></i></button>
+                  </div>
+                </div>
+                <p class="text-text text-sm mb-2 leading-relaxed whitespace-pre-wrap">{{ note.content }}</p>
+                <div class="flex flex-wrap gap-1">
+                  <span
+                    v-for="t in note.tags"
+                    :key="t"
+                    class="text-[10px] bg-gray-100 text-subtext px-2 py-0.5 rounded-md"
+                  >#{{ t }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <Modal
+      :is-open="isExportOpen"
+      title="匯出選項"
+      @close="isExportOpen = false"
+    >
+      <p class="text-sm text-gray-500 mb-6">您想要如何匯出這些內容？</p>
+      <div class="space-y-3">
+        <button
+          @click="handleExportAction('clipboard')"
+          class="w-full py-3 bg-secondary text-dark rounded-xl font-bold hover:shadow-md transition flex items-center justify-center gap-2"
+        >
+          <i class="fa-regular fa-copy"></i> 複製文字到剪貼簿
+        </button>
+        <button
+          @click="handleExportAction('file')"
+          class="w-full py-3 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-download"></i> 下載文字檔 (.txt)
+        </button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -163,6 +202,20 @@ const filteredNotes = computed(() => {
   }
   return filteredNotes
 })
+const groupedNotes = computed(() => {
+  const groups = {};
+  // Newest first
+  const sorted = [...filteredNotes.value].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  sorted.forEach(note => {
+    const d = new Date(note.date);
+    const key = `${d.getFullYear()}年 ${d.getMonth() + 1}月`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(note);
+  });
+
+  return Object.keys(groups).map(key => ({ title: key, items: groups[key] }));
+});
 
 const startEdit = (n) => { editingId.value = n.id; noteForm.value = { ...n, tags: n.tags.join(', ') } }
 const cancelEdit = () => { editingId.value = null; noteForm.value = { content: '', mood: 'happy', tags: '', date: new Date().toISOString() } }
