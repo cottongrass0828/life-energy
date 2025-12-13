@@ -91,6 +91,18 @@
 
     <div class="space-y-4">
       <div
+        v-if="filteredNotes.length === 0"
+        class="text-center text-gray-400 py-10 flex flex-col items-center"
+      >
+        <i class="fa-solid fa-wind text-2xl mb-2 opacity-50"></i>
+        <span>沒有符合的筆記</span>
+        <button
+          v-if="noteSearch"
+          @click="noteSearch = ''"
+          class="text-primary text-sm underline mt-2"
+        >清除搜尋</button>
+      </div>
+      <div
         v-for="note in filteredNotes.sort((a, b) => new Date(b.date) - new Date(a.date))"
         :key="note.id"
         class="bg-white p-4 rounded-3xl shadow-soft flex gap-4 group"
