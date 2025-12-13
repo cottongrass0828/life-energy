@@ -26,7 +26,7 @@
           v-for="m in ['happy', 'calm', 'tired', 'sad']"
           :key="m"
           @click="noteForm.mood = m"
-          :class="['text-xl px-2 py-1 rounded-full transition', noteForm.mood === m ? 'bg-secondary transform scale-110' : 'bg-gray-50']"
+          :class="['text-lg px-2 py-1 rounded-full transition', noteForm.mood === m ? 'bg-secondary transform scale-110' : 'bg-gray-50']"
         >
           {{ getMoodIcon(m) }}
         </button>
@@ -65,9 +65,9 @@
       </div>
       <button
         @click="exportTodayNotes"
-        class="text-xs bg-white border border-secondary text-dark px-3 py-1.5 rounded-lg shadow-sm font-bold hover:bg-secondary hover:border-transparent transition flex items-center gap-1"
+        class="text-xs bg-white border border-secondary text-dark px-3 py-1.5 rounded-lg font-bold flex items-center gap-1"
       >
-        <i class="fa-solid fa-calendar-day text-secondary group-hover:text-dark"></i> 匯出今日
+        <i class="fa-solid fa-calendar-day text-secondary"></i> 匯出今日
       </button>
     </div>
     <div class="flex gap-2 mb-4">
@@ -77,7 +77,7 @@
           v-model="noteSearch"
           type="text"
           placeholder="搜尋筆記內容或標籤..."
-          class="cute-input pl-10 py-2 text-sm border-white shadow-sm"
+          class="cute-input pl-10 py-2 text-sm border-white"
         >
         <button
           v-if="noteSearch"
