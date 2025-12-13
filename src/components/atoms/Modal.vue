@@ -15,7 +15,7 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <div class="p-5 overflow-y-auto custom-scroll">
+      <div class="px-5 pb-5 overflow-y-auto custom-scroll">
         <slot></slot>
       </div>
     </div>

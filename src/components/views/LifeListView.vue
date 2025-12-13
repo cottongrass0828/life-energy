@@ -29,12 +29,12 @@
         :key="c"
         @click="filterCategory = c"
         :class="['px-3 py-1 rounded-full text-xs whitespace-nowrap', filterCategory === c ? 'bg-primary text-white' : 'bg-gray-100 text-subtext']"
-      >{{
-        c }}</button>
+      >
+        {{ c }}
+      </button>
     </div>
 
     <div class="space-y-4">
-
       <!-- Unscheduled Inbox -->
       <div
         v-if="unscheduledTasks.length > 0 && filterCategory === 'All'"
@@ -447,7 +447,6 @@ const emit = defineEmits(['add-goal', 'update-goal', 'delete-goal', 'add-task', 
 
 const activeGoal = ref(null)
 const filterCategory = ref('All')
-
 
 // modal states
 const isAddGoalOpen = ref(false)

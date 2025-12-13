@@ -41,11 +41,11 @@
         <button
           v-if="editingId"
           @click="cancelEdit"
-          class="text-gray-400 px-3 py-2 text-sm"
+          class="text-gray-400 px-3 py-2 text-sm shrink-0"
         >取消</button>
         <button
           @click="handleSave"
-          class="bg-secondary text-teal-800 px-6 py-2 rounded-xl font-bold shadow-cute text-sm"
+          class="bg-secondary text-teal-800 px-6 py-2 rounded-xl font-bold shadow-cute text-sm shrink-0"
         >{{ editingId ? '更新' : '紀錄' }}</button>
       </div>
     </div>
@@ -177,6 +177,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getMoodIcon, formatDateTime } from '../../utils/date'
+import Modal from '../atoms/Modal.vue'
 
 const props = defineProps({
   notes: Array
@@ -187,6 +188,9 @@ const noteForm = ref({ content: '', mood: 'happy', tags: '', date: new Date().to
 const editingId = ref(null)
 const filterTag = ref('')
 const noteSearch = ref('');
+const exportContent = ref('');
+const exportFilename = ref('');
+const isExportOpen = ref(false)
 
 const allTags = computed(() => [...new Set(props.notes.flatMap(n => n.tags))])
 const filteredNotes = computed(() => {
@@ -232,7 +236,7 @@ const handleSave = () => {
 
 const exportTodayNotes = () => {
   const todayISO = new Date().toISOString().split('T')[0];
-  const todays = notes.value.filter(n => n.date.startsWith(todayISO));
+  const todays = props.notes.filter(n => n.date.startsWith(todayISO));
   if (todays.length === 0) return alert('今天還沒有筆記喔！');
 
   todays.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest to newest
@@ -244,7 +248,60 @@ const exportTodayNotes = () => {
     textContent += `[${timeStr}] (${getMoodIcon(n.mood)})\n${n.content}\n\n-------------------\n\n`;
   });
 
-  downloadTextFile(textContent, `journal_${todayISO}.txt`);
+  prepareExport(textContent, `journal_${todayISO}.txt`);
+};
+
+const prepareExport = (content, filename) => {
+  exportContent.value = content;
+  exportFilename.value = filename;
+  isExportOpen.value = true;
+};
+
+const downloadTextFile = (content, filename) => {
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+const handleExportAction = (type) => {
+  if (type === 'file') {
+    downloadTextFile(exportContent.value, exportFilename.value);
+  } else if (type === 'clipboard') {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(exportContent.value)
+        .then(() => alert('✅ 已複製到剪貼簿！'))
+        .catch((err) => {
+          console.warn('Clipboard API 失敗，嘗試使用 Fallback:', err);
+          copyToClipboardFallback(exportContent.value);
+        });
+    } else {
+      // 瀏覽器不支援新 API，直接使用 Fallback
+      copyToClipboardFallback(exportContent.value);
+    }
+  }
+  isExportOpen.value = false;
+};
+
+// 舊版複製方法的 Fallback (用於不支援 Clipboard API 或 Iframe 環境)
+const copyToClipboardFallback = (text) => {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; // 避免頁面滾動
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    alert('✅ 已複製到剪貼簿！');
+  } catch (err) {
+    alert('❌ 複製失敗，請手動下載檔案。');
+  }
+  document.body.removeChild(ta);
 };
 </script>
 
