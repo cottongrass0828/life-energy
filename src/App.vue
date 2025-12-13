@@ -91,22 +91,22 @@ const tasks = useStorage('le_tasks', [])
 const categories = useStorage('le_categories', ['生活', '工作', '學習', '健康', '財富'])
 
 // notes
-const addNote = (n) => notes.value.unshift({ ...n, id: generateId() })
-const updateNote = (id, n) => {
+const addNote = (note) => notes.value.unshift({ ...note, id: generateId() })
+const updateNote = (id, note) => {
   const idx = notes.value.findIndex(x => x.id === id)
-  if (idx !== -1) notes.value[idx] = n
+  if (idx !== -1) notes.value[idx] = note
 }
-const deleteNote = (id) => (notes.value = notes.value.filter(n => n.id !== id))
+const deleteNote = (id) => (notes.value = notes.value.filter(note => note.id !== id))
 
 // goals
-const addGoal = (g) => goals.value.push({ ...g, id: generateId() })
-const updateGoal = (id, g) => {
+const addGoal = (goal) => goals.value.push({ ...goal, id: generateId() })
+const updateGoal = (id, goal) => {
   const idx = goals.value.findIndex(x => x.id === id)
-  if (idx !== -1) goals.value[idx] = g
+  if (idx !== -1) goals.value[idx] = goal
 }
 const deleteGoal = (id) => {
-  goals.value = goals.value.filter(g => g.id !== id)
-  tasks.value = tasks.value.filter(t => t.goalId !== id)
+  goals.value = goals.value.filter(goal => goal.id !== id)
+  tasks.value = tasks.value.filter(task => task.goalId !== id)
 }
 
 // recurrence helper
@@ -140,9 +140,9 @@ function handleRecurrence (task) {
 }
 
 // tasks
-const addTask = (t) => tasks.value.push({ ...t, id: generateId(), completed: false })
+const addTask = (task) => tasks.value.push({ ...task, id: generateId(), completed: false })
 const updateTask = (id, updates) => {
-  const idx = tasks.value.findIndex(t => t.id === id)
+  const idx = tasks.value.findIndex(task => task.id === id)
   if (idx !== -1) {
     const original = tasks.value[idx]
     if (updates.completed && !original.completed && original.recurrence) handleRecurrence(original)
@@ -153,7 +153,7 @@ const updateTask = (id, updates) => {
     }
   }
 }
-const deleteTask = (id) => (tasks.value = tasks.value.filter(t => t.id !== id))
+const deleteTask = (id) => (tasks.value = tasks.value.filter(task => task.id !== id))
 
 // import
 const handleImport = (data) => {
