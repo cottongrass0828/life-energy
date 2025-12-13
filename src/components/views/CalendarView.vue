@@ -168,7 +168,10 @@
 import { ref, computed } from 'vue'
 import { formatDate, formatDateTime } from '../../utils/date'
 
-const props = defineProps({ tasks: Array, notes: Array })
+const props = defineProps({
+  tasks: Array,
+  notes: Array
+})
 const emit = defineEmits(['update-task'])
 
 const viewType = ref('month')
@@ -214,16 +217,18 @@ const getDayTasks = (date, isTimeGrid = false) => {
   if (!date) return []
   const dStr = formatDate(date)
   return props.tasks.filter(t => {
-    if (!t.startDate || !t.deadline) return false
+    if (!t.completed && (!t.startDate || !t.deadline)) return false
     if (isTimeGrid) {
-      // if (t.isAllDay || t.completed) return false
       const tStart = new Date(t.startDate)
       const tEnd = new Date(t.deadline)
       const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0)
       const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999)
       return tStart < dayEnd && tEnd > dayStart
     } else {
-      return formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr
+      if (!t.startDate) {
+        return formatDate(t.completedDate) <= dStr && formatDate(t.completedDate) >= dStr
+      }
+      return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
     }
   })
 }
@@ -249,9 +254,13 @@ const getDayEnergy = (date) => {
   if (!date) return 0;
   const dStr = formatDate(date);
   const dayTasks = props.tasks.filter(t => {
-    if (!t.startDate || !t.deadline) return false;
-    return formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr;
+    if (!t.completed && (!t.startDate || !t.deadline)) return false
+    if (!t.startDate) {
+      return formatDate(t.completedDate) <= dStr && formatDate(t.completedDate) >= dStr
+    }
+    return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
   });
+
   return dayTasks.reduce((acc, t) => acc + (parseInt(t.estimatedEnergy) || 0), 0);
 };
 
