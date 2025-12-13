@@ -73,13 +73,7 @@
         </div>
       </div>
       <div class="mt-6 space-y-3">
-        <div class="flex justify-between">
-          <h3 class="font-bold text-text mb-3 font-rounded">{{ formatDate(selectedDate) }} 詳細行程</h3>
-          <div class="text-right text-sm">
-            已消耗 <i class="fa-solid fa-bolt text-yellow-400 mr-1"></i>
-            <span class="text-orange-400">{{ getDayEnergy(selectedDate) }}</span>
-          </div>
-        </div>
+        <h3 class="font-bold text-text mb-3 font-rounded">{{ formatDate(selectedDate) }} 詳細行程</h3>
         <div
           v-if="getDayTasks(selectedDate).length === 0"
           class="text-center text-gray-400 text-sm"
@@ -112,6 +106,10 @@
             >
               {{ formatDateTime(task.startDate).split(' ')[1] }} - {{ formatDateTime(task.deadline).split(' ')[1] }}
             </div>
+          </div>
+          <div class="text-right text-sm">
+            <i class="fa-solid fa-bolt text-yellow-400 mr-1"></i>
+            <span class="text-orange-400">{{ task.estimatedEnergy }}</span>
           </div>
         </div>
       </div>
