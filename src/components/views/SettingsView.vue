@@ -194,7 +194,8 @@ const version = pkg.version
 const props = defineProps({
   tasks: Array,
   goals: Array,
-  categories: Array
+  categories: Array,
+  notes: Array
 })
 
 const emit = defineEmits(['set-categories', 'import-data', 'update-task', 'delete-task'])
@@ -244,7 +245,7 @@ const handleDeleteCategory = (cat) => {
 }
 
 const handleExport = () => {
-  const blob = new Blob([JSON.stringify({ tasks: props.tasks, goals: props.goals, categories: props.categories })], { type: 'application/json' })
+  const blob = new Blob([JSON.stringify({ tasks: props.tasks, goals: props.goals, categories: props.categories, notes: props.notes })], { type: 'application/json' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
   a.download = 'life_energy_backup.json'
