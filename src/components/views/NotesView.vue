@@ -45,18 +45,43 @@
       </div>
     </div>
 
-    <div class="flex overflow-x-auto no-scrollbar gap-2 pb-2">
+    <div class="flex overflow-x-auto no-scrollbar gap-2 pb-2 mb-1">
+      <div class="flex-1">
+        <button
+          @click="filterTag = ''"
+          :class="['whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold', filterTag === '' ? 'bg-text text-white' : 'bg-white text-subtext']"
+        >全部</button>
+        <button
+          v-for="t in allTags"
+          :key="t"
+          @click="filterTag = t"
+          :class="['whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold', filterTag === t ? 'bg-primary text-white' : 'bg-white text-subtext']"
+        >#{{ t }}</button>
+      </div>
       <button
-        @click="filterTag = ''"
-        :class="['whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold', filterTag === '' ? 'bg-text text-white' : 'bg-white text-subtext']"
-      >全部</button>
-      <button
-        v-for="t in allTags"
-        :key="t"
-        @click="filterTag = t"
-        :class="['whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold', filterTag === t ? 'bg-primary text-white' : 'bg-white text-subtext']"
-      >#{{
-        t }}</button>
+        @click="exportTodayNotes"
+        class="text-xs bg-white border border-secondary text-dark px-3 py-1.5 rounded-lg shadow-sm font-bold hover:bg-secondary hover:border-transparent transition flex items-center gap-1"
+      >
+        <i class="fa-solid fa-calendar-day text-secondary group-hover:text-dark"></i> 匯出今日
+      </button>
+    </div>
+    <div class="flex gap-2 mb-4">
+      <div class="relative flex-1">
+        <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        <input
+          v-model="noteSearch"
+          type="text"
+          placeholder="搜尋筆記內容或標籤..."
+          class="cute-input pl-10 py-2 text-sm border-white shadow-sm"
+        >
+        <button
+          v-if="noteSearch"
+          @click="noteSearch = ''"
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        >
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
     </div>
 
     <div class="space-y-4">
@@ -109,9 +134,22 @@ const emit = defineEmits(['add-note', 'update-note', 'delete-note'])
 const noteForm = ref({ content: '', mood: 'happy', tags: '', date: new Date().toISOString() })
 const editingId = ref(null)
 const filterTag = ref('')
+const noteSearch = ref('');
 
 const allTags = computed(() => [...new Set(props.notes.flatMap(n => n.tags))])
-const filteredNotes = computed(() => filterTag.value ? props.notes.filter(n => n.tags.includes(filterTag.value)) : props.notes)
+const filteredNotes = computed(() => {
+  let filteredNotes = props.notes;
+  if (filterTag.value) {
+    filteredNotes = filteredNotes.filter(n => n.tags.includes(filterTag.value))
+  }
+  if (noteSearch.value.trim()) {
+    const term = noteSearch.value.toLowerCase();
+    filteredNotes = filteredNotes.filter(note =>
+      note.content.toLowerCase().includes(term)
+    );
+  }
+  return filteredNotes
+})
 
 const startEdit = (n) => { editingId.value = n.id; noteForm.value = { ...n, tags: n.tags.join(', ') } }
 const cancelEdit = () => { editingId.value = null; noteForm.value = { content: '', mood: 'happy', tags: '', date: new Date().toISOString() } }
@@ -125,4 +163,27 @@ const handleSave = () => {
   else emit('add-note', payload)
   cancelEdit()
 }
+
+const exportTodayNotes = () => {
+  const todayISO = new Date().toISOString().split('T')[0];
+  const todays = notes.value.filter(n => n.date.startsWith(todayISO));
+  if (todays.length === 0) return alert('今天還沒有筆記喔！');
+
+  todays.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest to newest
+
+  let textContent = `隨手筆記匯出 - ${todayISO}\n\n`;
+  todays.forEach(n => {
+    const dt = new Date(n.date);
+    const timeStr = `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+    textContent += `[${timeStr}] (${getMoodIcon(n.mood)})\n${n.content}\n\n-------------------\n\n`;
+  });
+
+  downloadTextFile(textContent, `journal_${todayISO}.txt`);
+};
 </script>
+
+<style scoped>
+.pl-10 {
+  padding-left: 2.5rem !important;
+}
+</style>

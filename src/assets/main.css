@@ -19,7 +19,6 @@
     --shadow-soft: '0 4px 20px -2px rgba(200, 200, 200, 0.25)';
     --shadow-cute: '3px 3px 0px 0px rgba(74, 74, 74, 0.1)';
     --shadow-inner-soft: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)';
-
 }
 
 body {
@@ -36,6 +35,20 @@ body {
     border-radius: 1.5rem;
     box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
+}
+
+.cute-input {
+    border: 2px solid #F0F0F0;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+
+.cute-input:focus {
+    border-color: #FFB7B2;
 }
 
 /* Hide Scrollbar but keep functionality */
