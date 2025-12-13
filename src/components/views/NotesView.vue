@@ -8,8 +8,14 @@
     >
       <div
         v-if="editingId"
-        class="text-xs text-primary font-bold mb-2"
-      >正在編輯筆記...</div>
+        class="flex justify-between"
+      >
+        <div class="text-xs text-primary font-bold mb-2">正在編輯筆記...</div>
+        <button
+          @click="$emit('delete-note', noteForm.id)"
+          class="text-red-400 px-3 py-2 text-sm"
+        >刪除</button>
+      </div>
       <textarea
         v-model="noteForm.content"
         class="w-full bg-gray-50 rounded-xl p-3 text-sm outline-none resize-none h-24 mb-3"
@@ -40,8 +46,7 @@
         <button
           @click="handleSave"
           class="bg-secondary text-teal-800 px-6 py-2 rounded-xl font-bold shadow-cute text-sm"
-        >{{ editingId ?
-          '更新' : '紀錄' }}</button>
+        >{{ editingId ? '更新' : '紀錄' }}</button>
       </div>
     </div>
 
@@ -102,10 +107,6 @@
                 @click="startEdit(note)"
                 class="text-gray-300 hover:text-primary text-xs"
               ><i class="fas fa-pen"></i></button>
-              <button
-                @click="$emit('delete-note', note.id)"
-                class="text-gray-300 hover:text-red-400 text-xs"
-              ><i class="fas fa-times"></i></button>
             </div>
           </div>
           <p class="text-text text-sm mb-2 leading-relaxed whitespace-pre-wrap">{{ note.content }}</p>
