@@ -140,8 +140,7 @@
                   <span :class="[task.completed ? 'line-through text-gray-300' : 'text-text']">{{
                     task.title }}</span>
                   <span class="text-[10px] text-gray-400">
-                    {{ task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline) :
-                      '待排程') }}
+                    {{ task.isAllDay ? '整天' : (task.deadline ? formatDateTime(task.deadline) : '待排程') }}
                     <i
                       v-if="task.recurrence"
                       class="fas fa-repeat ml-2 text-secondary"
