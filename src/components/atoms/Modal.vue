@@ -6,7 +6,7 @@
     <div
       class="bg-white rounded-3xl shadow-xl w-full max-w-md max-h-[90vh] overflow-hidden flex flex-col transition-transform transform translate-y-0 opacity-100"
     >
-      <div class="flex justify-between items-center p-5 border-b border-gray-100 shrink-0 bg-white z-10">
+      <div class="flex justify-between items-center p-5 shrink-0 bg-white z-10">
         <h3 class="text-lg font-bold text-text font-rounded">{{ title }}</h3>
         <button
           @click="$emit('close')"
