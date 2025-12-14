@@ -64,10 +64,10 @@
         >#{{ t }}</button>
       </div>
       <button
-        @click="exportTodayNotes"
+        @click="isExportOpen = true"
         class="text-xs bg-white border border-secondary text-dark px-3 py-1.5 rounded-lg font-bold flex items-center gap-1"
       >
-        <i class="fa-solid fa-calendar-day text-secondary"></i> 匯出今日
+        <i class="fa-solid fa-calendar-day text-secondary"></i> 匯出
       </button>
     </div>
     <div class="flex gap-2 mb-4">
@@ -157,15 +157,26 @@
     >
       <p class="text-sm text-gray-500 mb-6">您想要如何匯出這些內容？</p>
       <div class="space-y-3">
+        <input
+          type="date"
+          v-model="exportContentDate"
+          class="w-full bg-gray-50 p-3 rounded-xl outline-none"
+        >
+        <p
+          v-if="certainDateNotes.length === 0"
+          class="text-red-400 text-sm"
+        > 這天沒有筆記喔！</p>
         <button
           @click="handleExportAction('clipboard')"
-          class="w-full py-3 bg-secondary text-dark rounded-xl font-bold hover:shadow-md transition flex items-center justify-center gap-2"
+          :disabled="certainDateNotes.length === 0"
+          class="w-full py-3 bg-secondary text-dark rounded-xl font-bold disabled:bg-secondary/50 disabled:text-gray-400 transition flex items-center justify-center gap-2"
         >
           <i class="fa-regular fa-copy"></i> 複製文字到剪貼簿
         </button>
         <button
           @click="handleExportAction('file')"
-          class="w-full py-3 bg-white border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition flex items-center justify-center gap-2"
+          :disabled="certainDateNotes.length === 0"
+          class="w-full py-3 bg-white border border-gray-200 text-gray-600 rounded-xl disabled:bg-gray-200/50 disabled:text-gray-400 hover:bg-gray-50 transition flex items-center justify-center gap-2"
         >
           <i class="fa-solid fa-download"></i> 下載文字檔 (.txt)
         </button>
@@ -189,10 +200,12 @@ const editingId = ref(null)
 const filterTag = ref('')
 const noteSearch = ref('');
 const exportContent = ref('');
+const exportContentDate = ref(new Date().toISOString().split('T')[0]);
 const exportFilename = ref('');
 const isExportOpen = ref(false)
 
 const allTags = computed(() => [...new Set(props.notes.flatMap(n => n.tags))])
+
 const filteredNotes = computed(() => {
   let filteredNotes = props.notes;
   if (filterTag.value) {
@@ -206,6 +219,7 @@ const filteredNotes = computed(() => {
   }
   return filteredNotes
 })
+
 const groupedNotes = computed(() => {
   const groups = {};
   // Newest first
@@ -221,6 +235,8 @@ const groupedNotes = computed(() => {
   return Object.keys(groups).map(key => ({ title: key, items: groups[key] }));
 });
 
+const certainDateNotes = computed(() => props.notes.filter(n => n.date.startsWith(exportContentDate.value)))
+
 const startEdit = (n) => { editingId.value = n.id; noteForm.value = { ...n, tags: n.tags.join(', ') } }
 const cancelEdit = () => { editingId.value = null; noteForm.value = { content: '', mood: 'happy', tags: '', date: new Date().toISOString() } }
 
@@ -234,27 +250,19 @@ const handleSave = () => {
   cancelEdit()
 }
 
-const exportTodayNotes = () => {
-  const todayISO = new Date().toISOString().split('T')[0];
-  const todays = props.notes.filter(n => n.date.startsWith(todayISO));
-  if (todays.length === 0) return alert('今天還沒有筆記喔！');
+const exportNotes = () => {
+  const notes = props.notes.filter(n => n.date.startsWith(exportContentDate.value))
+  notes.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest to newest
 
-  todays.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest to newest
-
-  let textContent = '';
-  todays.forEach(n => {
+  let textContent = `${exportContentDate.value} \n\n`;
+  notes.forEach(n => {
     const dt = new Date(n.date);
     const timeStr = `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
-    textContent += `${todayISO} ${timeStr} (${getMoodIcon(n.mood)})\n${n.content}\n\n===\n`;
+    textContent += `${timeStr} ${getMoodIcon(n.mood)} ─ ${n.content}\n\n--- \n`;
   });
 
-  prepareExport(textContent, `journal_${todayISO}.txt`);
-};
-
-const prepareExport = (content, filename) => {
-  exportContent.value = content;
-  exportFilename.value = filename;
-  isExportOpen.value = true;
+  exportContent.value = textContent;
+  exportFilename.value = `journal_${exportContentDate.value}.txt`;
 };
 
 const downloadTextFile = (content, filename) => {
@@ -269,6 +277,7 @@ const downloadTextFile = (content, filename) => {
 }
 
 const handleExportAction = (type) => {
+  exportNotes()
   if (type === 'file') {
     downloadTextFile(exportContent.value, exportFilename.value);
   } else if (type === 'clipboard') {
