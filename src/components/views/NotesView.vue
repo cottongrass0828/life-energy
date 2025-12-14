@@ -187,7 +187,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { getMoodIcon, formatDateTime } from '../../utils/date'
+import { getMoodIcon, formatDateTime, toLocalISOString } from '../../utils/date'
 import Modal from '../atoms/Modal.vue'
 
 const props = defineProps({
@@ -195,12 +195,12 @@ const props = defineProps({
 })
 const emit = defineEmits(['add-note', 'update-note', 'delete-note'])
 
-const noteForm = ref({ content: '', mood: 'happy', tags: '', date: new Date().toISOString() })
+const noteForm = ref({ content: '', mood: 'happy', tags: '', date: toLocalISOString(new Date()) })
 const editingId = ref(null)
 const filterTag = ref('')
 const noteSearch = ref('');
 const exportContent = ref('');
-const exportContentDate = ref(new Date().toISOString().split('T')[0]);
+const exportContentDate = ref(toLocalISOString(new Date()).split('T')[0]);
 const exportFilename = ref('');
 const isExportOpen = ref(false)
 
@@ -238,7 +238,7 @@ const groupedNotes = computed(() => {
 const certainDateNotes = computed(() => props.notes.filter(n => n.date.startsWith(exportContentDate.value)))
 
 const startEdit = (n) => { editingId.value = n.id; noteForm.value = { ...n, tags: n.tags.join(', ') } }
-const cancelEdit = () => { editingId.value = null; noteForm.value = { content: '', mood: 'happy', tags: '', date: new Date().toISOString() } }
+const cancelEdit = () => { editingId.value = null; noteForm.value = { content: '', mood: 'happy', tags: '', date: toLocalISOString(new Date()) } }
 
 const handleSave = () => {
   if (!noteForm.value.content) return

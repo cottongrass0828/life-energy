@@ -72,7 +72,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStorage } from './composables/useStorage'
-import { generateId } from './utils/date'
+import { generateId, toLocalISOString } from './utils/date'
 
 import NavItem from './components/atoms/NavItem.vue'
 import DashboardView from './components/views/DashboardView.vue'
@@ -114,7 +114,7 @@ function handleRecurrence (task) {
   if (!task.recurrence) return
   const { frequency, interval, type, count, endDate } = task.recurrence
   if (type === 'count' && count <= 1) return
-  if (type === 'until' && new Date() > new Date(endDate)) return
+  if (type === 'until' && new Date() > new Date(endDate + 'T23:59:59')) return;
 
   const nextStart = new Date(task.startDate)
   const nextEnd = new Date(task.deadline)
@@ -125,13 +125,15 @@ function handleRecurrence (task) {
   nextStart[addFn[frequency]](nextStart[getFn(addFn[frequency])]() + addVal[frequency])
   nextEnd[addFn[frequency]](nextEnd[getFn(addFn[frequency])]() + addVal[frequency])
 
-  if (type === 'until' && nextStart > new Date(endDate)) return
+  // Fix: Check next occurrence against end date (local time end of day)
+  if (type === 'until' && nextStart > new Date(endDate + 'T23:59:59')) return;
 
+  // Convert to local ISO for new task
   const newTask = {
     ...task,
     id: generateId(),
-    startDate: nextStart.toISOString(),
-    deadline: nextEnd.toISOString(),
+    startDate: toLocalISOString(nextStart),
+    deadline: toLocalISOString(nextEnd),
     completed: false,
     completedDate: null,
     recurrence: { ...task.recurrence, count: type === 'count' ? count - 1 : count }
@@ -149,7 +151,7 @@ const updateTask = (id, updates) => {
     tasks.value[idx] = {
       ...original,
       ...updates,
-      completedDate: updates.completed ? new Date().toISOString() : (updates.completed === false ? null : original.completedDate)
+      completedDate: updates.completed ? toLocalISOString(new Date()) : (updates.completed === false ? null : original.completedDate)
     }
   }
 }

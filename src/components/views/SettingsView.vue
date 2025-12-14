@@ -64,7 +64,9 @@
         <span
           v-if="overdueTasks.length > 0"
           class="absolute top-3 right-3 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full"
-        >{{ overdueTasks.length }}</span>
+        >
+          {{ overdueTasks.length }}
+        </span>
         <div class="font-bold text-sm">過期整理</div>
       </button>
     </div>
@@ -185,7 +187,7 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
 import Modal from '../atoms/Modal.vue'
-import { formatDate } from '../../utils/date'
+import { formatDate, toLocalISOString } from '../../utils/date'
 import pkg from '../../../package.json'
 
 const version = pkg.version
@@ -206,8 +208,9 @@ const newCategory = ref('')
 const editingCat = reactive({ original: '', new: '' })
 
 const overdueTasks = computed(() => {
-  const now = new Date()
-  return props.tasks.filter(t => t.deadline && new Date(t.deadline) < now && !t.completed)
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  return props.tasks.filter(t => t.deadline && new Date(t.deadline).setHours(23, 59, 59, 999) < today && !t.completed)
 })
 const stats = computed(() => {
   const finished = props.tasks.filter(t => t.completed);
@@ -262,6 +265,6 @@ const handleFileImport = (e) => {
 
 const handleReschedule = (task, days) => {
   const d = new Date(); d.setDate(d.getDate() + days); d.setHours(23, 59, 0, 0)
-  emit('update-task', task.id, { deadline: d.toISOString() })
+  emit('update-task', task.id, { deadline: toLocalISOString(d) })
 }
 </script>

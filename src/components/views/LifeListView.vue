@@ -288,7 +288,7 @@
             <input
               :type="tempTask.isAllDay ? 'date' : 'datetime-local'"
               :value="tempTask.isAllDay ? (tempTask.startDate ? tempTask.startDate.split('T')[0] : '') : toInputDateTime(tempTask.startDate)"
-              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T00:00:00.000Z' : '') : (val ? new Date(val).toISOString() : ''); tempTask.startDate = iso; if (iso && !tempTask.deadline) tempTask.deadline = iso; }"
+              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T00:00:00.000' : '') : (val ? toLocalISOString(new Date(val)) : ''); tempTask.startDate = iso; if (iso && !tempTask.deadline) tempTask.deadline = iso; }"
               class="w-full bg-gray-50 p-3 rounded-xl outline-none text-xs"
             >
           </div>
@@ -297,7 +297,7 @@
             <input
               :type="tempTask.isAllDay ? 'date' : 'datetime-local'"
               :value="tempTask.isAllDay ? (tempTask.deadline ? tempTask.deadline.split('T')[0] : '') : toInputDateTime(tempTask.deadline)"
-              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T23:59:59.999' : '') : (val ? new Date(val).toISOString() : ''); tempTask.deadline = iso; }"
+              @input="e => { const val = e.target.value; const iso = tempTask.isAllDay ? (val ? val + 'T23:59:59.999' : '') : (val ? toLocalISOString(new Date(val)) : ''); tempTask.deadline = iso; }"
               class="w-full bg-gray-50 p-3 rounded-xl outline-none text-xs"
             >
           </div>
@@ -430,7 +430,7 @@
 import { ref, computed } from 'vue'
 import Modal from '../atoms/Modal.vue'
 import Badge from '../atoms/Badge.vue'
-import { formatDate, formatDateTime, toInputDateTime } from '../../utils/date'
+import { formatDate, formatDateTime, toInputDateTime, toLocalISOString } from '../../utils/date'
 
 
 defineOptions({
@@ -462,11 +462,11 @@ const openAddGoal = () => { tempGoal.value = { title: '', category: props.catego
 const openEditGoal = (g) => { tempGoal.value = { ...g }; isAddGoalOpen.value = true }
 
 const openAddTask = (goalId) => {
-  const now = new Date()
+  const now = toLocalISOString(new Date())
   const end = new Date(now.getTime() + 60 * 60 * 1000)
   tempTask.value = {
     goalId: goalId || '', title: '', urgency: false, importance: false,
-    estimatedEnergy: 3, startDate: now.toISOString(), deadline: end.toISOString(), isAllDay: false, recurrence: null
+    estimatedEnergy: 3, startDate: toLocalISOString(now), deadline: toLocalISOString(end), isAllDay: false, recurrence: null
   }
   taskErrors.value = {}
   isAddTaskOpen.value = true

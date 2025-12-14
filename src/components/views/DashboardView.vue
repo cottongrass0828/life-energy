@@ -99,7 +99,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { formatDate, formatDateTime } from '../../utils/date'
+import { formatDate, formatDateTime, toLocalISOString } from '../../utils/date'
 
 defineOptions({
   name: 'DashboardView'
@@ -134,7 +134,7 @@ const totalEnergy = computed(() => todayTasks.value.reduce((acc, t) => acc + (pa
 
 const handleQuickNote = () => {
   if (!noteContent.value.trim()) return
-  emit('add-note', { content: noteContent.value, mood: 'calm', tags: ['隨手記'], date: new Date().toISOString() })
+  emit('add-note', { content: noteContent.value, mood: 'calm', tags: ['隨手記'], date: toLocalISOString(new Date()) })
   noteContent.value = ''
 }
 

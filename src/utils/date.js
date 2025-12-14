@@ -16,13 +16,28 @@ export const formatDateTime = (dateStr) => {
 
 export const toInputDateTime = (dateStr) => {
     if (!dateStr) return ''
-    const d = new Date(dateStr)
-    if (isNaN(d.getTime())) return ''
-    const offset = d.getTimezoneOffset() * 60000
-    return new Date(d.getTime() - offset).toISOString().slice(0, 16)
+    // If it ends with Z (legacy data), convert to local ISO. If not (new data), just use it.
+    if (dateStr.endsWith('Z')) {
+        const d = new Date(dateStr);
+        const offset = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - offset).toISOString().slice(0, 16);
+    }
+    return dateStr.slice(0, 16);
 }
-
 export const getMoodIcon = (mood) => {
-    const moods = { happy: '😊', calm: '😌', sad: '😢', tired: '😫' }
+    const moods = {
+        happy: '😊',
+        calm: '😌',
+        sad: '😢',
+        tired: '😫'
+    }
     return moods[mood] || '😌'
 }
+
+// --- Timezone Helpers (Client Local Time) ---
+export const toLocalISOString = (dateInput) => {
+    const d = dateInput ? new Date(dateInput) : new Date();
+    const offset = d.getTimezoneOffset() * 60000;
+    // Shift time by offset to get local time value in UTC field, then slice off 'Z'
+    return new Date(d.getTime() - offset).toISOString().slice(0, -1);
+};
