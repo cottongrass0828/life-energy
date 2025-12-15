@@ -265,6 +265,6 @@ const handleFileImport = (e) => {
 
 const handleReschedule = (task, days) => {
   const d = new Date(); d.setDate(d.getDate() + days); d.setHours(23, 59, 0, 0)
-  emit('update-task', task.id, { deadline: toLocalISOString(d) })
+  emit('update-task', task.id, { startDate: toLocalISOString(d), deadline: toLocalISOString(d) })
 }
 </script>

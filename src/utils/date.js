@@ -37,7 +37,18 @@ export const getMoodIcon = (mood) => {
 // --- Timezone Helpers (Client Local Time) ---
 export const toLocalISOString = (dateInput) => {
     const d = dateInput ? new Date(dateInput) : new Date();
-    const offset = d.getTimezoneOffset() * 60000;
-    // Shift time by offset to get local time value in UTC field, then slice off 'Z'
-    return new Date(d.getTime() - offset).toISOString().slice(0, -1);
+    if (isNaN(d)) throw new Error(`Invalid date input: ${dateInput}`);
+
+    const offset = -d.getTimezoneOffset(); // 單位：分鐘（台北會是 -480）
+    const sign = offset >= 0 ? '+' : '-';
+    const pad = (n) => String(Math.floor(Math.abs(n))).padStart(2, '0');
+
+    const hours = pad(offset / 60);
+    const minutes = pad(offset % 60);
+
+    const localISO = new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+        .toISOString()
+        .replace('Z', `${sign}${hours}:${minutes}`);
+
+    return localISO;
 };

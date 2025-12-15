@@ -461,7 +461,8 @@ const openAddGoal = () => { tempGoal.value = { title: '', category: props.catego
 const openEditGoal = (g) => { tempGoal.value = { ...g }; isAddGoalOpen.value = true }
 
 const openAddTask = (goalId) => {
-  const now = toLocalISOString(new Date())
+  const now = new Date(toLocalISOString(new Date()))
+
   const end = new Date(now.getTime() + 60 * 60 * 1000)
   tempTask.value = {
     goalId: goalId || '', title: '', urgency: false, importance: false,
