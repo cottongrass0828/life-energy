@@ -126,7 +126,7 @@ const todayTasks = computed(() => {
       return todayStr >= formatDate(start) && todayStr <= formatDate(end)
     }
     return start <= todayEnd && end >= todayStart
-  })
+  }).sort((a, b) => new Date(a.date) - new Date(b.date))
 })
 
 const completedToday = computed(() => props.tasks.filter(t => t.completed && formatDate(t.completedDate) === todayStr).length)

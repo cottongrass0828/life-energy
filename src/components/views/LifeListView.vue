@@ -100,10 +100,6 @@
                 @click.stop="openEditGoal(goal)"
                 class="text-gray-300 hover:text-primary"
               ><i class="fas fa-pen"></i></button>
-              <!-- <button
-                @click.stop="$emit('delete-goal', goal.id)"
-                class="text-gray-300 hover:text-red-400"
-              ><i class="fas fa-trash"></i></button> -->
             </div>
           </div>
           <h3 class="text-lg font-bold text-text mb-2">{{ goal.title }}</h3>
@@ -125,7 +121,7 @@
         >
           <div class="space-y-2 mb-4">
             <div
-              v-for="task in props.tasks.filter(t => t.goalId === goal.id)"
+              v-for="task in sortedTasks.filter(t => t.goalId === goal.id)"
               :key="task.id"
               class="bg-white p-3 rounded-xl flex items-center justify-between shadow-sm"
             >
@@ -161,10 +157,6 @@
                   @click="openEditTask(task)"
                   class="text-gray-300 hover:text-primary"
                 ><i class=" fas fa-pen "></i></button>
-                <!-- <button
-                  @click="$emit('delete-task', task.id)"
-                  class="text-gray-300 hover:text-red-400"
-                ><i class="fas fa-times text-xs"></i></button> -->
               </div>
             </div>
           </div>
@@ -456,6 +448,12 @@ const taskErrors = ref({})
 
 const unscheduledTasks = computed(() => props.tasks.filter(t => !t.goalId))
 const filteredGoals = computed(() => filterCategory.value === 'All' ? props.goals : props.goals.filter(g => g.category === filterCategory.value))
+const sortedTasks = computed(() => props.tasks.sort((a, b) => {
+  if (a.completed !== b.completed) {
+    return a.completed - b.completed;
+  }
+  return new Date(a.date) - new Date(b.date);
+}))
 
 const openAddGoal = () => { tempGoal.value = { title: '', category: props.categories[0] || '生活', deadline: '' }; isAddGoalOpen.value = true }
 const openEditGoal = (g) => { tempGoal.value = { ...g }; isAddGoalOpen.value = true }
