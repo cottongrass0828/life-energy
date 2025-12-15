@@ -254,11 +254,11 @@ const exportNotes = () => {
   const notes = props.notes.filter(n => n.date.startsWith(exportContentDate.value))
   notes.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest to newest
 
-  let textContent = `${exportContentDate.value} \n\n`;
+  let textContent = `${exportContentDate.value} \n`;
   notes.forEach(n => {
     const dt = new Date(n.date);
     const timeStr = `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
-    textContent += `${timeStr} ${getMoodIcon(n.mood)} ─ ${n.content}\n\n--- \n`;
+    textContent += `${timeStr} ${getMoodIcon(n.mood)} ─ ${n.content}\n\n`;
   });
 
   exportContent.value = textContent;
