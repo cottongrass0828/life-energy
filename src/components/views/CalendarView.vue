@@ -20,8 +20,10 @@
         @click="changeTime(-1)"
         class="p-2 text-primary hover:bg-white rounded-full"
       ><i class="fas fa-chevron-left"></i></button>
-      <span class="font-bold text-lg font-rounded">{{ viewType === 'month' ? currentDate.getFullYear() +
-        '年' + (currentDate.getMonth() + 1) + '月' : formatDate(currentDate) }}</span>
+      <span class="font-bold text-lg font-rounded">
+        {{ viewType === 'month' ? currentDate.getFullYear() +
+          '年' + (currentDate.getMonth() + 1) + '月' : formatDate(currentDate) }}
+      </span>
       <button
         @click="changeTime(1)"
         class="p-2 text-primary hover:bg-white rounded-full"
@@ -36,8 +38,7 @@
             v-for="d in ['日', '一', '二', '三', '四', '五', '六']"
             :key="d"
             class="text-xs text-subtext"
-          >{{ d
-          }}</span>
+          >{{ d }}</span>
         </div>
         <div class="grid grid-cols-7 gap-1">
           <div
@@ -65,9 +66,17 @@
             </div>
             <div
               v-if="day && getDayEnergy(day) > 0"
-              class="text-[10px] text-orange-400 font-bold mt-auto mb-1"
+              class="text-[10px] font-bold mt-auto mb-1"
             >
-              <i class="fa-solid fa-bolt mr-1"></i>{{ getDayEnergy(day) }}
+              <span class="text-orange-400 mr-1">
+                <i class="fa-solid fa-bolt"></i>{{ getDayEnergy(day, 'completed') }}
+              </span>
+              <span
+                v-if="getDayEnergy(day, 'unCompleted')"
+                class="text-gray-300"
+              >
+                <i class="fa-solid fa-bolt"></i>{{ getDayEnergy(day, 'unCompleted') }}
+              </span>
             </div>
           </div>
         </div>
@@ -109,7 +118,7 @@
           </div>
           <div class="text-right text-sm">
             <i class="fa-solid fa-bolt text-yellow-400 mr-1"></i>
-            <span class="text-orange-400">{{ task.estimatedEnergy }}</span>
+            <span class="text-subtext">{{ task.estimatedEnergy }}</span>
           </div>
         </div>
       </div>
@@ -250,15 +259,29 @@ const getTaskStyle = (task, date) => {
   return { top: startMins + 'px', height: Math.max(20, durationMins) + 'px' }
 }
 
-const getDayEnergy = (date) => {
+const getDayEnergy = (date, type = 'all') => {
   if (!date) return 0;
+
   const dStr = formatDate(date);
   const dayTasks = props.tasks.filter(t => {
     if (!t.completed && (!t.startDate || !t.deadline)) return false
-    if (!t.startDate) {
-      return formatDate(t.completedDate) <= dStr && formatDate(t.completedDate) >= dStr
+    switch (type) {
+      case 'completed':
+        if (t.completed) {
+          return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
+        }
+        break;
+      case 'unCompleted':
+        if (!t.completed) {
+          return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
+        }
+        break;
+      default:
+        if (!t.startDate) {
+          return formatDate(t.completedDate) <= dStr && formatDate(t.completedDate) >= dStr
+        }
+        return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
     }
-    return (formatDate(t.startDate) <= dStr && formatDate(t.deadline) >= dStr)
   });
 
   return dayTasks.reduce((acc, t) => acc + (parseInt(t.estimatedEnergy) || 0), 0);
